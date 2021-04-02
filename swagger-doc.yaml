@@ -1,0 +1,808 @@
+---
+  openapi: "3.0.0"
+  info: 
+    title: "nest-poc-api"
+    description: "Template for any node project"
+    version: "1.0.0"
+    contact: {}
+  tags: []
+  servers: []
+  components: 
+    securitySchemes: 
+      bearer: 
+        scheme: "bearer"
+        bearerFormat: "JWT"
+        type: "http"
+    schemas: 
+      GetManyUserResponseDto: 
+        type: "object"
+        properties: 
+          data: 
+            type: "array"
+            items: 
+              $ref: "#/components/schemas/User"
+          count: 
+            type: "number"
+          total: 
+            type: "number"
+          page: 
+            type: "number"
+          pageCount: 
+            type: "number"
+        required: 
+          - "data"
+          - "count"
+          - "total"
+          - "page"
+          - "pageCount"
+      User: 
+        type: "object"
+        properties: 
+          id: 
+            type: "string"
+          email: 
+            type: "string"
+          name: 
+            type: "string"
+          role: 
+            type: "string"
+          status: 
+            type: "boolean"
+          password: 
+            type: "string"
+          salt: 
+            type: "string"
+          confirmationToken: 
+            type: "string"
+          recoverToken: 
+            type: "string"
+          createdAt: 
+            format: "date-time"
+            type: "string"
+          updatedAt: 
+            format: "date-time"
+            type: "string"
+        required: 
+          - "id"
+          - "email"
+          - "name"
+          - "role"
+          - "status"
+          - "password"
+          - "salt"
+          - "confirmationToken"
+          - "recoverToken"
+          - "createdAt"
+          - "updatedAt"
+      CreateUserDto: 
+        type: "object"
+        properties: 
+          email: 
+            type: "string"
+            maxLength: 200
+          name: 
+            type: "string"
+            maxLength: 200
+          role: 
+            enum: 
+              - "ADMIN"
+              - "USER"
+            type: "string"
+          password: 
+            type: "string"
+            minLength: 6
+          passwordConfirmation: 
+            type: "string"
+            minLength: 6
+        required: 
+          - "email"
+          - "name"
+          - "role"
+          - "password"
+          - "passwordConfirmation"
+      CreateManyUserDto: 
+        type: "object"
+        properties: 
+          bulk: 
+            type: "array"
+            items: 
+              $ref: "#/components/schemas/CreateUserDto"
+        required: 
+          - "bulk"
+      UpdateUserDto: 
+        type: "object"
+        properties: 
+          name: 
+            type: "string"
+          email: 
+            type: "string"
+          role: 
+            type: "string"
+            enum: 
+              - "ADMIN"
+              - "USER"
+          status: 
+            type: "boolean"
+        required: 
+          - "name"
+          - "email"
+          - "role"
+          - "status"
+      CredentialsDto: 
+        type: "object"
+        properties: 
+          email: 
+            type: "string"
+            maxLength: 200
+          password: 
+            type: "string"
+            minLength: 6
+        required: 
+          - "email"
+          - "password"
+      GetManyConsumerResponseDto: 
+        type: "object"
+        properties: 
+          data: 
+            type: "array"
+            items: 
+              $ref: "#/components/schemas/Consumer"
+          count: 
+            type: "number"
+          total: 
+            type: "number"
+          page: 
+            type: "number"
+          pageCount: 
+            type: "number"
+        required: 
+          - "data"
+          - "count"
+          - "total"
+          - "page"
+          - "pageCount"
+      Consumer: 
+        type: "object"
+        properties: 
+          id: 
+            type: "string"
+          name: 
+            type: "string"
+          appkey: 
+            type: "string"
+          isActive: 
+            type: "boolean"
+          createdAt: 
+            format: "date-time"
+            type: "string"
+          updatedAt: 
+            format: "date-time"
+            type: "string"
+        required: 
+          - "id"
+          - "name"
+          - "appkey"
+          - "isActive"
+          - "createdAt"
+          - "updatedAt"
+      CreateManyConsumerDto: 
+        type: "object"
+        properties: 
+          bulk: 
+            type: "array"
+            items: 
+              $ref: "#/components/schemas/Consumer"
+        required: 
+          - "bulk"
+  paths: 
+    /api/v1/users/{id}: 
+      get: 
+        operationId: "getOneBaseUserControllerUser"
+        summary: "Retrieve one User"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "number"
+          - 
+            name: "fields"
+            description: "Selects resource fields. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#select\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: false
+          - 
+            name: "join"
+            description: "Adds relational resources. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#join\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: true
+          - 
+            name: "cache"
+            description: "Reset cache (if was enabled). <a href=\"https://github.com/nestjsx/crud/wiki/Requests#cache\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "integer"
+              minimum: 0
+              maximum: 1
+        responses: 
+          200: 
+            description: "Get one base response"
+            content: 
+              application/json: 
+                schema: 
+                  $ref: "#/components/schemas/User"
+        tags: 
+          - "users"
+        security: 
+          - 
+            bearer: []
+      patch: 
+        operationId: "updateOneBaseUserControllerUser"
+        summary: "Update one User"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "number"
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/UpdateUserDto"
+        responses: 
+          200: 
+            description: "Response"
+            content: 
+              application/json: 
+                schema: 
+                  $ref: "#/components/schemas/User"
+        tags: 
+          - "users"
+        security: 
+          - 
+            bearer: []
+      put: 
+        operationId: "replaceOneBaseUserControllerUser"
+        summary: "Replace one User"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "number"
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/User"
+        responses: 
+          200: 
+            description: "Response"
+            content: 
+              application/json: 
+                schema: 
+                  $ref: "#/components/schemas/User"
+        tags: 
+          - "users"
+        security: 
+          - 
+            bearer: []
+      delete: 
+        operationId: "deleteOneBaseUserControllerUser"
+        summary: "Delete one User"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "number"
+        responses: 
+          200: 
+            description: "Delete one base response"
+        tags: 
+          - "users"
+        security: 
+          - 
+            bearer: []
+    /api/v1/users: 
+      get: 
+        operationId: "getManyBaseUserControllerUser"
+        summary: "Retrieve many User"
+        parameters: 
+          - 
+            name: "fields"
+            description: "Selects resource fields. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#select\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: false
+          - 
+            name: "s"
+            description: "Adds search condition. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#search\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "filter"
+            description: "Adds filter condition. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#filter\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: true
+          - 
+            name: "or"
+            description: "Adds OR condition. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#or\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: true
+          - 
+            name: "sort"
+            description: "Adds sort by field. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#sort\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: true
+          - 
+            name: "join"
+            description: "Adds relational resources. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#join\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: true
+          - 
+            name: "limit"
+            description: "Limit amount of resources. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#limit\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "integer"
+          - 
+            name: "offset"
+            description: "Offset amount of resources. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#offset\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "integer"
+          - 
+            name: "page"
+            description: "Page portion of resources. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#page\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "integer"
+          - 
+            name: "cache"
+            description: "Reset cache (if was enabled). <a href=\"https://github.com/nestjsx/crud/wiki/Requests#cache\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "integer"
+              minimum: 0
+              maximum: 1
+        responses: 
+          200: 
+            description: "Get many base response"
+            content: 
+              application/json: 
+                schema: 
+                  oneOf: 
+                    - 
+                      $ref: "#/components/schemas/GetManyUserResponseDto"
+                    - 
+                      type: "array"
+                      items: 
+                        $ref: "#/components/schemas/User"
+        tags: 
+          - "users"
+        security: 
+          - 
+            bearer: []
+      post: 
+        operationId: "createOneBaseUserControllerUser"
+        summary: "Create one User"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/CreateUserDto"
+        responses: 
+          201: 
+            description: "Get create one base response"
+            content: 
+              application/json: 
+                schema: 
+                  $ref: "#/components/schemas/User"
+        tags: 
+          - "users"
+        security: 
+          - 
+            bearer: []
+    /api/v1/users/bulk: 
+      post: 
+        operationId: "createManyBaseUserControllerUser"
+        summary: "Create many User"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/CreateManyUserDto"
+        responses: 
+          201: 
+            description: "Get create many base response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    $ref: "#/components/schemas/User"
+        tags: 
+          - "users"
+        security: 
+          - 
+            bearer: []
+    /api/v1/auth: 
+      post: 
+        operationId: "AuthController_auth"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/CredentialsDto"
+        responses: 
+          201: 
+            description: ""
+        tags: 
+          - "auth"
+    /api/v1/auth/me: 
+      get: 
+        operationId: "AuthController_getMe"
+        parameters: []
+        responses: 
+          200: 
+            description: ""
+            content: 
+              application/json: 
+                schema: 
+                  $ref: "#/components/schemas/User"
+        tags: 
+          - "auth"
+        security: 
+          - 
+            bearer: []
+    /api/v1/consumers/{id}: 
+      get: 
+        operationId: "getOneBaseConsumerControllerConsumer"
+        summary: "Retrieve one Consumer"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "number"
+          - 
+            name: "fields"
+            description: "Selects resource fields. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#select\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: false
+          - 
+            name: "join"
+            description: "Adds relational resources. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#join\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: true
+          - 
+            name: "cache"
+            description: "Reset cache (if was enabled). <a href=\"https://github.com/nestjsx/crud/wiki/Requests#cache\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "integer"
+              minimum: 0
+              maximum: 1
+        responses: 
+          200: 
+            description: "Get one base response"
+            content: 
+              application/json: 
+                schema: 
+                  $ref: "#/components/schemas/Consumer"
+        tags: 
+          - "consumers"
+        security: 
+          - 
+            bearer: []
+      patch: 
+        operationId: "updateOneBaseConsumerControllerConsumer"
+        summary: "Update one Consumer"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "number"
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Consumer"
+        responses: 
+          200: 
+            description: "Response"
+            content: 
+              application/json: 
+                schema: 
+                  $ref: "#/components/schemas/Consumer"
+        tags: 
+          - "consumers"
+        security: 
+          - 
+            bearer: []
+      put: 
+        operationId: "replaceOneBaseConsumerControllerConsumer"
+        summary: "Replace one Consumer"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "number"
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Consumer"
+        responses: 
+          200: 
+            description: "Response"
+            content: 
+              application/json: 
+                schema: 
+                  $ref: "#/components/schemas/Consumer"
+        tags: 
+          - "consumers"
+        security: 
+          - 
+            bearer: []
+      delete: 
+        operationId: "deleteOneBaseConsumerControllerConsumer"
+        summary: "Delete one Consumer"
+        parameters: 
+          - 
+            name: "id"
+            required: true
+            in: "path"
+            schema: 
+              type: "number"
+        responses: 
+          200: 
+            description: "Delete one base response"
+        tags: 
+          - "consumers"
+        security: 
+          - 
+            bearer: []
+    /api/v1/consumers: 
+      get: 
+        operationId: "getManyBaseConsumerControllerConsumer"
+        summary: "Retrieve many Consumer"
+        parameters: 
+          - 
+            name: "fields"
+            description: "Selects resource fields. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#select\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: false
+          - 
+            name: "s"
+            description: "Adds search condition. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#search\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "string"
+          - 
+            name: "filter"
+            description: "Adds filter condition. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#filter\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: true
+          - 
+            name: "or"
+            description: "Adds OR condition. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#or\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: true
+          - 
+            name: "sort"
+            description: "Adds sort by field. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#sort\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: true
+          - 
+            name: "join"
+            description: "Adds relational resources. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#join\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "array"
+              items: 
+                type: "string"
+            style: "form"
+            explode: true
+          - 
+            name: "limit"
+            description: "Limit amount of resources. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#limit\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "integer"
+          - 
+            name: "offset"
+            description: "Offset amount of resources. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#offset\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "integer"
+          - 
+            name: "page"
+            description: "Page portion of resources. <a href=\"https://github.com/nestjsx/crud/wiki/Requests#page\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "integer"
+          - 
+            name: "cache"
+            description: "Reset cache (if was enabled). <a href=\"https://github.com/nestjsx/crud/wiki/Requests#cache\" target=\"_blank\">Docs</a>"
+            required: false
+            in: "query"
+            schema: 
+              type: "integer"
+              minimum: 0
+              maximum: 1
+        responses: 
+          200: 
+            description: "Get many base response"
+            content: 
+              application/json: 
+                schema: 
+                  oneOf: 
+                    - 
+                      $ref: "#/components/schemas/GetManyConsumerResponseDto"
+                    - 
+                      type: "array"
+                      items: 
+                        $ref: "#/components/schemas/Consumer"
+        tags: 
+          - "consumers"
+        security: 
+          - 
+            bearer: []
+      post: 
+        operationId: "createOneBaseConsumerControllerConsumer"
+        summary: "Create one Consumer"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/Consumer"
+        responses: 
+          201: 
+            description: "Get create one base response"
+            content: 
+              application/json: 
+                schema: 
+                  $ref: "#/components/schemas/Consumer"
+        tags: 
+          - "consumers"
+        security: 
+          - 
+            bearer: []
+    /api/v1/consumers/bulk: 
+      post: 
+        operationId: "createManyBaseConsumerControllerConsumer"
+        summary: "Create many Consumer"
+        parameters: []
+        requestBody: 
+          required: true
+          content: 
+            application/json: 
+              schema: 
+                $ref: "#/components/schemas/CreateManyConsumerDto"
+        responses: 
+          201: 
+            description: "Get create many base response"
+            content: 
+              application/json: 
+                schema: 
+                  type: "array"
+                  items: 
+                    $ref: "#/components/schemas/Consumer"
+        tags: 
+          - "consumers"
+        security: 
+          - 
+            bearer: []

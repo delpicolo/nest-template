@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    container_name: "postgres"
+    restart: always
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    container_name: "adminer"
+    ports:
+      - 8080:8080
+
+volumes:
+  pg-data:

@@ -1,0 +1,22 @@
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "pguser",
+  "password": "pgpassword",
+  "database": "nestjs",
+  "entities": [
+    "__dirname/../**/*.entity.{js,ts}"
+  ],
+  "synchronize": false,
+  "migrationsTableName": "migrations",
+  "migrations": [
+    "src/modules/database/migrations/*.{js,ts}"
+  ],
+  "seeds": [
+    "src/modules/database/seeds/*{.ts,.js}"
+  ],
+  "cli": {
+    "migrationsDir": "src/modules/database/migrations"
+  }
+}
